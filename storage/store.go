@@ -13,8 +13,9 @@ type ResourceStore interface {
 	GetFeedback(id string) (*domain.Feedback, error)
 	GetPatient(id string) (*domain.Patient, error)
 
-	GetAllPatients(id string) ([]domain.Patient, error)
+	GetAllPatients() ([]domain.Patient, error)
 	GetAppointmentsForPatient(patientId string) ([]domain.Appointment, error)
+	GetDiagnosisForAppointment(appointmentId string) (*domain.Diagnosis, error)
 	GetResourceByReference(ref domain.Reference) (domain.Resource, error)
 
 	WriteAppointment(appointment domain.Appointment) error
@@ -24,7 +25,7 @@ type ResourceStore interface {
 	WritePatient(patient domain.Patient) error
 }
 
-type memoryStore struct {
+type MemoryStore struct {
 	Appointments map[string]domain.Appointment
 	Diagnoses    map[string]domain.Diagnosis
 	Doctors      map[string]domain.Doctor
@@ -32,7 +33,7 @@ type memoryStore struct {
 	Patients     map[string]domain.Patient
 }
 
-func (m *memoryStore) GetAppointment(id string) (*domain.Appointment, error) {
+func (m *MemoryStore) GetAppointment(id string) (*domain.Appointment, error) {
 	if len(m.Appointments) == 0 {
 		return nil, nil
 	}
@@ -45,7 +46,7 @@ func (m *memoryStore) GetAppointment(id string) (*domain.Appointment, error) {
 	return &appointment, nil
 }
 
-func (m *memoryStore) GetDiagnosis(id string) (*domain.Diagnosis, error) {
+func (m *MemoryStore) GetDiagnosis(id string) (*domain.Diagnosis, error) {
 	if len(m.Diagnoses) == 0 {
 		return nil, nil
 	}
@@ -58,7 +59,7 @@ func (m *memoryStore) GetDiagnosis(id string) (*domain.Diagnosis, error) {
 	return &diagnosis, nil
 }
 
-func (m *memoryStore) GetDoctor(id string) (*domain.Doctor, error) {
+func (m *MemoryStore) GetDoctor(id string) (*domain.Doctor, error) {
 	if len(m.Doctors) == 0 {
 		return nil, nil
 	}
@@ -70,7 +71,7 @@ func (m *memoryStore) GetDoctor(id string) (*domain.Doctor, error) {
 
 	return &doctor, nil
 }
-func (m *memoryStore) GetFeedback(id string) (*domain.Feedback, error) {
+func (m *MemoryStore) GetFeedback(id string) (*domain.Feedback, error) {
 	if len(m.Feedback) == 0 {
 		return nil, nil
 	}
@@ -83,7 +84,7 @@ func (m *memoryStore) GetFeedback(id string) (*domain.Feedback, error) {
 	return &feedback, nil
 }
 
-func (m *memoryStore) GetPatient(id string) (*domain.Patient, error) {
+func (m *MemoryStore) GetPatient(id string) (*domain.Patient, error) {
 	if len(m.Patients) == 0 {
 		return nil, nil
 	}
@@ -96,7 +97,7 @@ func (m *memoryStore) GetPatient(id string) (*domain.Patient, error) {
 	return &patient, nil
 }
 
-func (m *memoryStore) GetAllPatients(id string) ([]domain.Patient, error) {
+func (m *MemoryStore) GetAllPatients() ([]domain.Patient, error) {
 	var patients []domain.Patient
 	for _, patient := range m.Patients {
 		patients = append(patients, patient)
@@ -104,7 +105,7 @@ func (m *memoryStore) GetAllPatients(id string) ([]domain.Patient, error) {
 	return patients, nil
 }
 
-func (m *memoryStore) GetAppointmentsForPatient(patientId string) ([]domain.Appointment, error) {
+func (m *MemoryStore) GetAppointmentsForPatient(patientId string) ([]domain.Appointment, error) {
 	// Terrible performance for large sets of appointments, but this gets the job done for a memory store
 	// which we anticipate having a very small set. Ideally we'd use a DB like BuntDB if we anticipated needing
 	// an in-memory database with complex functionality like secondary indexes
@@ -117,7 +118,17 @@ func (m *memoryStore) GetAppointmentsForPatient(patientId string) ([]domain.Appo
 	return appointments, nil
 }
 
-func (m *memoryStore) GetResourceByReference(ref domain.Reference) (domain.Resource, error) {
+func (m *MemoryStore) GetDiagnosisForAppointment(appointmentId string) (*domain.Diagnosis, error) {
+	for _, diagnosis := range m.Diagnoses {
+		// Short circuit and exit since we're only allowing one feedback per appointment
+		if diagnosis.Appointment.ID == appointmentId {
+			return &diagnosis, nil
+		}
+	}
+	return nil, nil
+}
+
+func (m *MemoryStore) GetResourceByReference(ref domain.Reference) (domain.Resource, error) {
 	switch ref.Type {
 	case domain.AppointmentResType:
 		return m.GetAppointment(ref.ID)
@@ -134,7 +145,7 @@ func (m *memoryStore) GetResourceByReference(ref domain.Reference) (domain.Resou
 	}
 }
 
-func (m *memoryStore) WriteAppointment(appointment domain.Appointment) error {
+func (m *MemoryStore) WriteAppointment(appointment domain.Appointment) error {
 	if m.Appointments == nil {
 		m.Appointments = map[string]domain.Appointment{}
 	}
@@ -143,7 +154,7 @@ func (m *memoryStore) WriteAppointment(appointment domain.Appointment) error {
 	return nil
 }
 
-func (m *memoryStore) WriteDiagnosis(diagnosis domain.Diagnosis) error {
+func (m *MemoryStore) WriteDiagnosis(diagnosis domain.Diagnosis) error {
 	if m.Diagnoses == nil {
 		m.Diagnoses = map[string]domain.Diagnosis{}
 	}
@@ -152,7 +163,7 @@ func (m *memoryStore) WriteDiagnosis(diagnosis domain.Diagnosis) error {
 	return nil
 }
 
-func (m *memoryStore) WriteDoctor(doctor domain.Doctor) error {
+func (m *MemoryStore) WriteDoctor(doctor domain.Doctor) error {
 	if m.Doctors == nil {
 		m.Doctors = map[string]domain.Doctor{}
 	}
@@ -161,7 +172,7 @@ func (m *memoryStore) WriteDoctor(doctor domain.Doctor) error {
 	return nil
 }
 
-func (m *memoryStore) WriteFeedback(feedback domain.Feedback) error {
+func (m *MemoryStore) WriteFeedback(feedback domain.Feedback) error {
 	if m.Feedback == nil {
 		m.Feedback = map[string]domain.Feedback{}
 	}
@@ -170,7 +181,7 @@ func (m *memoryStore) WriteFeedback(feedback domain.Feedback) error {
 	return nil
 }
 
-func (m *memoryStore) WritePatient(patient domain.Patient) error {
+func (m *MemoryStore) WritePatient(patient domain.Patient) error {
 	if m.Patients == nil {
 		m.Patients = map[string]domain.Patient{}
 	}

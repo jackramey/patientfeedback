@@ -124,6 +124,11 @@ func (r ResourceHeader) GetResourceType() ResourceType {
 
 // Convenience mechanisms for getting values for script
 
+func AppointmentSummary(a Appointment) string {
+	// Assume first appointment type
+	return a.Type[0].Text
+}
+
 func PatientPreferredFirstName(p Patient) string {
 	// Assume first Name and Given is preferred
 	if len(p.Names) == 0 || len(p.Names[0].Given) == 0 {

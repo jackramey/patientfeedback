@@ -10,11 +10,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-type Loader struct {
-	resourceStore ResourceStore
-}
-
-func (l Loader) LoadData(reader io.Reader) error {
+func LoadData(reader io.Reader, store ResourceStore) error {
 	data, err := ioutil.ReadAll(reader)
 	if err != nil {
 		return errors.Wrap(err, "error reading data")
@@ -30,19 +26,19 @@ func (l Loader) LoadData(reader io.Reader) error {
 		resource := entry.Resource
 		switch resource.GetResourceType() {
 		case domain.AppointmentResType:
-			if err := l.resourceStore.WriteAppointment(*resource.(*domain.Appointment)); err != nil {
+			if err := store.WriteAppointment(*resource.(*domain.Appointment)); err != nil {
 				return err
 			}
 		case domain.DiagnosisResType:
-			if err := l.resourceStore.WriteDiagnosis(*resource.(*domain.Diagnosis)); err != nil {
+			if err := store.WriteDiagnosis(*resource.(*domain.Diagnosis)); err != nil {
 				return err
 			}
 		case domain.DoctorResType:
-			if err := l.resourceStore.WriteDoctor(*resource.(*domain.Doctor)); err != nil {
+			if err := store.WriteDoctor(*resource.(*domain.Doctor)); err != nil {
 				return err
 			}
 		case domain.PatientResType:
-			if err := l.resourceStore.WritePatient(*resource.(*domain.Patient)); err != nil {
+			if err := store.WritePatient(*resource.(*domain.Patient)); err != nil {
 				return err
 			}
 		default:

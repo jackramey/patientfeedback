@@ -11,7 +11,7 @@ import (
 )
 
 func Test_memoryStore_GetResourceByReference(t *testing.T) {
-	store := memoryStore{}
+	store := MemoryStore{}
 	t.Run("get appointment by reference", func(t *testing.T) {
 		appointmentID := uuid.New().String()
 		err := store.WriteAppointment(domain.Appointment{
