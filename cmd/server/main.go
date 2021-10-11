@@ -3,20 +3,20 @@ package main
 import (
 	"os"
 
-	"patientfeedback/http"
+	"patientfeedback/service"
 	"patientfeedback/storage"
 )
 
 func main() {
-	memStore := storage.MemoryStore{}
+	store := storage.MemoryStore{}
 	fileReader, err := os.Open("data/patient-feedback-raw-data.json")
 	if err != nil {
 		panic(err)
 	}
 
-	if err := storage.LoadData(fileReader, &memStore); err != nil {
+	if err := storage.LoadData(fileReader, &store); err != nil {
 		panic(err)
 	}
-	e := http.NewEchoServer(&memStore)
+	e := service.NewEchoServer(&store)
 	e.Logger.Fatal(e.Start(":1323"))
 }

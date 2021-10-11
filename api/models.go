@@ -18,3 +18,17 @@ type Feedback struct {
 	Understood bool   `json:"understood"`
 	Comment    string `json:"comment"`
 }
+
+type GetAppointmentsResponse struct {
+	Appointments []Appointment `json:"appointments"`
+}
+
+type GetPatientsResponse struct {
+	Patients []Patient `json:"patients"`
+}
+
+type CreateFeedbackRequest struct {
+	Rating     int    `json:"rating"`
+	Understood bool   `json:"understood"`
+	Comment    string `json:"comment"`
+}
