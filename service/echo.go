@@ -26,9 +26,10 @@ func NewEchoServer(store storage.ResourceStore) *echo.Echo {
 	appointmentsGroup.GET("/:appointmentId/feedback", appointmentsHandler.GetFeedbackForAppointment)
 	appointmentsGroup.POST("/:appointmentId/feedback", appointmentsHandler.PostFeedbackForAppointment)
 
-	adminHandler := adminHandler{store: store}
-	adminGroup := e.Group("/admin") // TODO add middleware here to require authN+authZ
-	adminGroup.GET("/dumpdb", adminHandler.DumpDB)
+	securedHandler := securedHandler{store: store}
+	securedGroup := e.Group("/secured") // TODO add middleware here to require authN+authZ
+	securedGroup.GET("/dumpdb", securedHandler.DumpDB)
+	securedGroup.POST("/bundle", securedHandler.ProcessBundle)
 
 	return e
 }

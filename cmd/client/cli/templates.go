@@ -2,10 +2,17 @@ package cli
 
 import "github.com/manifoldco/promptui"
 
+var patientSelectTemplates  = &promptui.SelectTemplates{
+	Label:    "{{ . }}:",
+	Active:   "\U000027A4 {{ .FullName | cyan }}",
+	Inactive: "  {{ .FullName | faint }}",
+	Selected: "Welcome {{ .FullName | green }}!",
+}
+
 var appointmentSelectTemplates = &promptui.SelectTemplates{
 	Label:    "{{ . }}:",
 	Active:   "\U000027A4 {{ .Summary | cyan }} ({{ .Doctor | white }})",
-	Inactive: "  {{ .Summary | cyan }} ({{ .Doctor | white }})",
+	Inactive: "  {{ .Summary | faint }} ({{ .Doctor | faint }})",
 	Selected: "\U000027A4 {{ .Summary | green }} {{\"with Dr\" | green}} {{ .Doctor | green }}",
 	Details: `
 --------- Appointment ----------

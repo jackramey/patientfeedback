@@ -132,10 +132,19 @@ func AppointmentSummary(a Appointment) string {
 func PatientPreferredFirstName(p Patient) string {
 	// Assume first Name and Given is preferred
 	if len(p.Names) == 0 || len(p.Names[0].Given) == 0 {
-		return "Patient" // Is it weird to call them this?
+		return "Patient"
 	}
 
 	return p.Names[0].Given[0]
+}
+
+func PatientPreferredFullName(p Patient) string {
+	// Assume first Name and Given is preferred
+	if len(p.Names) == 0 || len(p.Names[0].Text) == 0 {
+		return "Patient"
+	}
+
+	return p.Names[0].Text
 }
 
 func PreferredLastName(d Doctor) string {

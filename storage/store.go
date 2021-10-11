@@ -1,7 +1,7 @@
 package storage
 
 import (
-	"patientfeedback/domain"
+	"patientfeedback/internal/domain"
 
 	"github.com/pkg/errors"
 )
@@ -16,7 +16,7 @@ type ResourceStore interface {
 	GetAllPatients() ([]domain.Patient, error)
 	GetAppointmentsForPatient(patientId string) ([]domain.Appointment, error)
 	GetDiagnosisForAppointment(appointmentId string) (*domain.Diagnosis, error)
-	GetFeedbackForAppointment(appointmendId string) (*domain.Feedback, error)
+	GetFeedbackForAppointment(appointmendId string) ([]domain.Feedback, error)
 
 	GetResourceByReference(ref domain.Reference) (domain.Resource, error)
 
@@ -140,13 +140,14 @@ func (m *MemoryStore) GetDiagnosisForAppointment(appointmentId string) (*domain.
 	return nil, nil
 }
 
-func (m *MemoryStore) GetFeedbackForAppointment(appointmendId string) (*domain.Feedback, error) {
+func (m *MemoryStore) GetFeedbackForAppointment(appointmendId string) ([]domain.Feedback, error) {
+	var feedbacks []domain.Feedback
 	for _, feedback := range m.Feedback {
 		if feedback.Appointment.ID == appointmendId {
-			return &feedback, nil
+			feedbacks = append(feedbacks, feedback)
 		}
 	}
-	return nil, nil
+	return feedbacks, nil
 }
 
 func (m *MemoryStore) GetResourceByReference(ref domain.Reference) (domain.Resource, error) {

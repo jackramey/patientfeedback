@@ -4,16 +4,19 @@ import (
 	"fmt"
 	"os"
 
-	"patientfeedback/cmd/client/cli"
+	"patientfeedback/cmd/client/commands"
 )
 
 func main() {
-	if len(os.Args) < 2 {
-		fmt.Println("Please supply the member ID of the patient you wish to run the CLI as")
+	if err := commands.Root().Execute(); err != nil {
+		fmt.Println(os.Stderr, err)
+		os.Exit(1)
 	}
-	app, err := cli.NewApp(os.Args[1])
+	//checkErr(cli.NewApp().Run())
+}
+
+func checkErr(err error) {
 	if err != nil {
 		panic(err)
 	}
-	app.Run()
 }

@@ -9,7 +9,7 @@ import (
 )
 
 func TestLoader_LoadData(t *testing.T) {
-	reader, err := os.Open("../data/patient-feedback-raw-data.json")
+	reader, err := os.Open("../data/bundle.json")
 	require.NoError(t, err)
 	memStore := MemoryStore{}
 

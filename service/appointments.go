@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"patientfeedback/api"
-	. "patientfeedback/domain"
+	. "patientfeedback/internal/domain"
 	"patientfeedback/storage"
 
 	"github.com/google/uuid"
@@ -35,7 +35,17 @@ func (handler appointmentsHandler) GetFeedbackForAppointment(c echo.Context) err
 		return err
 	}
 
-	return c.JSON(http.StatusOK, feedback)
+	var output []api.Feedback
+	for _, f := range feedback {
+		output = append(output, api.Feedback{
+			ID:         f.ID,
+			Rating:     f.Rating,
+			Understood: f.Understood,
+			Comment:    f.Comment,
+		})
+	}
+
+	return c.JSON(http.StatusOK, api.GetFeedbackResponse{Feedback: output})
 }
 
 func (handler appointmentsHandler) PostFeedbackForAppointment(c echo.Context) error {

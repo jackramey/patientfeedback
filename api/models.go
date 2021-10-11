@@ -8,8 +8,9 @@ type Appointment struct {
 }
 
 type Patient struct {
-	ID   string `json:"id"`
-	Name string `json:"name"`
+	ID       string `json:"id"`
+	Name     string `json:"name"`
+	FullName string `json:"fullName"`
 }
 
 type Feedback struct {
@@ -31,4 +32,8 @@ type CreateFeedbackRequest struct {
 	Rating     int    `json:"rating"`
 	Understood bool   `json:"understood"`
 	Comment    string `json:"comment"`
+}
+
+type GetFeedbackResponse struct {
+	Feedback []Feedback `json:"feedback"`
 }

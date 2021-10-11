@@ -14,25 +14,42 @@ import (
 const serviceHost = "http://localhost:1323"
 
 type PatientClient struct {
-	patientId string
 	doer      Doer
 }
 
-func NewPatientClient(patientId string) PatientClient {
+func NewPatientClient() PatientClient {
 	return PatientClient{
 		doer:      http.DefaultClient,
-		patientId: patientId,
 	}
 }
 
-func (c PatientClient) GetPatientInfo() (api.Patient, error) {
-	resp, err := http.Get(serviceHost + "/patients/" + c.patientId)
+func (c PatientClient) GetAllPatients() ([]api.Patient, error) {
+	req, err := http.Get(serviceHost + "/patients/")
+	if err != nil {
+		return nil, err
+	}
+
+	body, err := ioutil.ReadAll(req.Body)
+	if err != nil {
+		panic(err)
+	}
+
+	var resp api.GetPatientsResponse
+	if err := json.Unmarshal(body, &resp); err != nil {
+		panic(err)
+	}
+
+	return resp.Patients, nil
+}
+
+func (c PatientClient) GetPatientInfo(patientId string) (api.Patient, error) {
+	req, err := http.Get(serviceHost + "/patients/" + patientId)
 	if err != nil {
 		fmt.Printf("did you forget to start the server?")
 		os.Exit(1)
 	}
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := ioutil.ReadAll(req.Body)
 	if err != nil {
 		panic(err)
 	}
@@ -45,8 +62,8 @@ func (c PatientClient) GetPatientInfo() (api.Patient, error) {
 	return patient, nil
 }
 
-func (c PatientClient) GetAppointmentsForPatient() ([]api.Appointment, error) {
-	req, err := http.NewRequest(http.MethodGet, serviceHost+"/patients/"+c.patientId+"/appointments", nil)
+func (c PatientClient) GetAppointmentsForPatient(patientId string) ([]api.Appointment, error) {
+	req, err := http.NewRequest(http.MethodGet, serviceHost+"/patients/"+patientId+"/appointments", nil)
 	if err != nil {
 		return nil, err
 	}

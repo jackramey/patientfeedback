@@ -3,7 +3,7 @@ package patientfeedback
 import (
 	"context"
 
-	. "patientfeedback/domain"
+	. "patientfeedback/internal/domain"
 	. "patientfeedback/storage"
 )
 

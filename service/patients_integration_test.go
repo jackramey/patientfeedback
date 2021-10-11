@@ -1,5 +1,4 @@
 //go:build integration
-// +build integration
 
 package service
 
@@ -22,7 +21,7 @@ var patientId = "6739ec3e-93bd-11eb-a8b3-0242ac130003"
 
 func Test_patientsHandler_GetAppointmentsForPatient(t *testing.T) {
 	store := storage.MemoryStore{}
-	fileReader, err := os.Open("../data/patient-feedback-raw-data.json")
+	fileReader, err := os.Open("../data/bundle.json")
 	require.NoError(t, err)
 
 	err = storage.LoadData(fileReader, &store)

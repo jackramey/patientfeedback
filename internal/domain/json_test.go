@@ -10,7 +10,7 @@ import (
 )
 
 func TestBundle_UnmarshalJSON(t *testing.T) {
-	bytes, err := ioutil.ReadFile("../data/patient-feedback-raw-data.json")
+	bytes, err := ioutil.ReadFile("../data/bundle.json")
 	require.NoError(t, err)
 
 	var bundle Bundle

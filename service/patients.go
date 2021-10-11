@@ -3,11 +3,11 @@ package service
 import (
 	"net/http"
 
-	"patientfeedback/api"
-	. "patientfeedback/domain"
-	"patientfeedback/storage"
-
 	"github.com/labstack/echo/v4"
+
+	"patientfeedback/api"
+	. "patientfeedback/internal/domain"
+	"patientfeedback/storage"
 )
 
 type patientsHandler struct {
@@ -21,9 +21,11 @@ func (handler patientsHandler) GetPatient(c echo.Context) error {
 		return err
 	}
 
+	fullName := PatientPreferredFullName(*patient)
 	return c.JSON(http.StatusOK, api.Patient{
 		ID:   patient.ID,
 		Name: PatientPreferredFirstName(*patient),
+		FullName: fullName,
 	})
 }
 
@@ -38,6 +40,7 @@ func (handler patientsHandler) GetAllPatients(c echo.Context) error {
 		apiPatients = append(apiPatients, api.Patient{
 			ID:   patient.ID,
 			Name: PatientPreferredFirstName(patient),
+			FullName: PatientPreferredFullName(patient),
 		})
 	}
 

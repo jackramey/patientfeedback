@@ -2,7 +2,6 @@ package cli
 
 import (
 	"fmt"
-	"os"
 	"strconv"
 
 	"patientfeedback/api"
@@ -19,29 +18,38 @@ type App struct {
 	feedback    api.Feedback
 }
 
-func NewApp(patientId string) (App, error) {
-	patientClient := client.NewPatientClient(patientId)
-	patient, err := patientClient.GetPatientInfo()
-	if err != nil {
-		fmt.Printf("unable to find patient with id: %s", patientId)
-		os.Exit(1)
-	}
-
+func NewApp() App {
 	return App{
-		client:  patientClient,
-		patient: patient,
-	}, nil
+		client: client.NewPatientClient(),
+	}
 }
 
 func (a App) Run() error {
+	a.patient = a.selectPatient()
 	a.appointment = a.selectAppointment()
 	a.feedback = a.promptForFeedback()
 	a.showFeedback()
 	return a.client.WriteFeedback(a.appointment.ID, a.feedback)
 }
 
+func (a App) selectPatient() api.Patient {
+	patients, err := a.client.GetAllPatients()
+	checkErr(err)
+
+	prompt := promptui.Select{
+		Label:     "Login as:",
+		Items:     patients,
+		Templates: patientSelectTemplates,
+	}
+
+	i, _, err := prompt.Run()
+	checkErr(err)
+
+	return patients[i]
+}
+
 func (a App) selectAppointment() api.Appointment {
-	appointments, err := a.client.GetAppointmentsForPatient()
+	appointments, err := a.client.GetAppointmentsForPatient(a.patient.ID)
 	checkErr(err)
 
 	prompt := promptui.Select{

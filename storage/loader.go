@@ -5,9 +5,9 @@ import (
 	"io"
 	"io/ioutil"
 
-	"patientfeedback/domain"
-
 	"github.com/pkg/errors"
+
+	"patientfeedback/internal/domain"
 )
 
 func LoadData(reader io.Reader, store ResourceStore) error {
