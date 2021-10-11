@@ -16,6 +16,8 @@ type ResourceStore interface {
 	GetAllPatients() ([]domain.Patient, error)
 	GetAppointmentsForPatient(patientId string) ([]domain.Appointment, error)
 	GetDiagnosisForAppointment(appointmentId string) (*domain.Diagnosis, error)
+	GetFeedbackForAppointment(appointmendId string) (*domain.Feedback, error)
+
 	GetResourceByReference(ref domain.Reference) (domain.Resource, error)
 
 	WriteAppointment(appointment domain.Appointment) error
@@ -23,6 +25,8 @@ type ResourceStore interface {
 	WriteDoctor(doctor domain.Doctor) error
 	WriteFeedback(feedback domain.Feedback) error
 	WritePatient(patient domain.Patient) error
+
+	DumpDB() DBDump
 }
 
 type MemoryStore struct {
@@ -31,6 +35,14 @@ type MemoryStore struct {
 	Doctors      map[string]domain.Doctor
 	Feedback     map[string]domain.Feedback
 	Patients     map[string]domain.Patient
+}
+
+type DBDump struct {
+	Appointments []domain.Appointment `json:"appointments"`
+	Diagnoses    []domain.Diagnosis   `json:"diagnoses"`
+	Doctors      []domain.Doctor      `json:"doctors"`
+	Feedback     []domain.Feedback    `json:"feedback"`
+	Patients     []domain.Patient     `json:"patients"`
 }
 
 func (m *MemoryStore) GetAppointment(id string) (*domain.Appointment, error) {
@@ -128,6 +140,15 @@ func (m *MemoryStore) GetDiagnosisForAppointment(appointmentId string) (*domain.
 	return nil, nil
 }
 
+func (m *MemoryStore) GetFeedbackForAppointment(appointmendId string) (*domain.Feedback, error) {
+	for _, feedback := range m.Feedback {
+		if feedback.Appointment.ID == appointmendId {
+			return &feedback, nil
+		}
+	}
+	return nil, nil
+}
+
 func (m *MemoryStore) GetResourceByReference(ref domain.Reference) (domain.Resource, error) {
 	switch ref.Type {
 	case domain.AppointmentResType:
@@ -188,4 +209,36 @@ func (m *MemoryStore) WritePatient(patient domain.Patient) error {
 
 	m.Patients[patient.ID] = patient
 	return nil
+}
+
+func (m *MemoryStore) DumpDB() DBDump {
+	var appointments []domain.Appointment
+	var diagnoses []domain.Diagnosis
+	var doctors []domain.Doctor
+	var feedback []domain.Feedback
+	var patients []domain.Patient
+
+	for _, val := range m.Appointments {
+		appointments = append(appointments, val)
+	}
+	for _, val := range m.Diagnoses {
+		diagnoses = append(diagnoses, val)
+	}
+	for _, val := range m.Doctors {
+		doctors = append(doctors, val)
+	}
+	for _, val := range m.Feedback {
+		feedback = append(feedback, val)
+	}
+	for _, val := range m.Patients {
+		patients = append(patients, val)
+	}
+
+	return DBDump{
+		Appointments: appointments,
+		Diagnoses:    diagnoses,
+		Doctors:      doctors,
+		Feedback:     feedback,
+		Patients:     patients,
+	}
 }

@@ -28,6 +28,16 @@ func (handler appointmentsHandler) GetAppointment(c echo.Context) error {
 	return c.JSON(http.StatusOK, appointment)
 }
 
+func (handler appointmentsHandler) GetFeedbackForAppointment(c echo.Context) error {
+	appointmentId := c.Param("appointmentId")
+	feedback, err := handler.store.GetFeedbackForAppointment(appointmentId)
+	if err != nil {
+		return err
+	}
+
+	return c.JSON(http.StatusOK, feedback)
+}
+
 func (handler appointmentsHandler) PostFeedbackForAppointment(c echo.Context) error {
 	req := c.Request()
 	appointmentId := c.Param("appointmentId")
