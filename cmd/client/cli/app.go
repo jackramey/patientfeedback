@@ -76,6 +76,8 @@ func (a App) getRatingInput() int {
 	prompt := promptui.Select{
 		Label:     fmt.Sprintf(ratingPromptText, a.patient.Name, a.appointment.Doctor),
 		Items:     makeRange(0, 10),
+		CursorPos: 5,
+		Size:      11,
 		Templates: ratingSelectTemplates,
 		Searcher:  searcher,
 	}

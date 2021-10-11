@@ -4,9 +4,9 @@ import "github.com/manifoldco/promptui"
 
 var appointmentSelectTemplates = &promptui.SelectTemplates{
 	Label:    "{{ . }}:",
-	Active:   "\U000027AA {{ .Summary | cyan }} ({{ .Doctor | white }})",
+	Active:   "\U000027A4 {{ .Summary | cyan }} ({{ .Doctor | white }})",
 	Inactive: "  {{ .Summary | cyan }} ({{ .Doctor | white }})",
-	Selected: "\U000027AA {{ .Summary | green | cyan }}",
+	Selected: "\U000027A4 {{ .Summary | green }} {{\"with Dr\" | green}} {{ .Doctor | green }}",
 	Details: `
 --------- Appointment ----------
 {{ "Summary:" | faint }}	{{ .Summary }}
@@ -15,11 +15,15 @@ var appointmentSelectTemplates = &promptui.SelectTemplates{
 
 var ratingSelectTemplates = &promptui.SelectTemplates{
 	Label:    "{{ . }}",
+	Active:   "\U000027A4 {{ .| cyan | bold}}",
+	Inactive:   "{{ .| faint }}",
 	Selected: "Rating: {{ . | green | cyan }}",
 }
 
 var understoodSelectTemplates = &promptui.SelectTemplates{
 	Label:    "{{ . }}",
+	Active:   "\U000027A4 {{ .| cyan | bold}}",
+	Inactive:   "{{ .| faint }}",
 	Selected: "Understood diagnosis: {{ . | green | cyan }}",
 }
 
