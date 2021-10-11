@@ -3,7 +3,7 @@ package cli
 import "github.com/manifoldco/promptui"
 
 var patientSelectTemplates  = &promptui.SelectTemplates{
-	Label:    "{{ . }}:",
+	Label:    "{{ . }}",
 	Active:   "\U000027A4 {{ .FullName | cyan }}",
 	Inactive: "  {{ .FullName | faint }}",
 	Selected: "Welcome {{ .FullName | green }}!",

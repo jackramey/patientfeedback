@@ -35,7 +35,7 @@ Running the server is simple, just run the following command:
 go run cmd/server/main.go
 ```
 
-## Running the CLI Client
+### Running the CLI Client
 
 In order to seed the server with data, we need to first simulate a bundle being sent. The server is handling this with an HTTP
 request handler. We can verify that the database on the server is empty by hitting a special endpoint to view the database contents
@@ -67,6 +67,19 @@ go run cmd/client/main.go feedback
 Follow the prompts to provide feedback and have the data sent back to the server to be saved.
 
 Running the `dumpdb` command will show you the full state of the database or you can hit `/appointments/<id>/feedback` REST endpoint to view the feedback item as it is saved in the system
+
+### Demo Screenshots
+
+![](assets/step1.png)
+
+![](assets/step2.png)
+
+![](assets/step3.png)
+
+![](assets/step4.png)
+
+![](assets/step5.png)
+
 
 ## Libraries Used
 
