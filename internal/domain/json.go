@@ -55,8 +55,12 @@ func unmarshalResource(bytes []byte) (Resource, error) {
 }
 
 func (r Reference) MarshalJSON() ([]byte, error) {
-	ref := strings.Join([]string{r.Type.String(), r.ID}, "/")
-	return json.Marshal(ref)
+	type reference struct {
+		Reference string `json:"reference"`
+	}
+	return json.Marshal(reference {
+		Reference: strings.Join([]string{r.Type.String(), r.ID}, "/"),
+	})
 }
 
 func (r *Reference) UnmarshalJSON(bytes []byte) error {
