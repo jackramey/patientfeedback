@@ -2,6 +2,8 @@ package domain
 
 import (
 	"time"
+
+	"github.com/google/uuid"
 )
 
 const (
@@ -161,6 +163,17 @@ func DiagnosisText(d Diagnosis) string {
 	// TODO Right now we unsafely assume that if there is a code, we have at minimum one coding. Rather than complicating
 	// this return with an error return, we're just going to return the name of the first coding in the diagnosis
 	return d.Code.Codings[0].Name
+}
+
+func NewBundle() Bundle {
+	return Bundle{
+		ResourceHeader: ResourceHeader{
+			ID:   uuid.New().String(),
+			Type: BundleResType,
+		},
+		Timestamp:      time.Time{},
+		Entries:        []Entry{},
+	}
 }
 
 
