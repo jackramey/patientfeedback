@@ -6,7 +6,9 @@ import (
 )
 
 func main() {
-	store := storage.MemoryStore{}
-	e := service.NewEchoServer(&store)
-	e.Logger.Fatal(e.Start(":1323"))
+	server := service.NewServer(service.Config{
+		Store: &storage.MemoryStore{},
+		Port: 1323,
+	})
+	server.Logger.Fatal(server.Run())
 }
